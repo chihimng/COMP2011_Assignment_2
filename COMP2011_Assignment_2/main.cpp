@@ -124,15 +124,64 @@ bool placeBlock(char board[BOARD_SIZE][BOARD_SIZE], int row, int col, direction 
                 board[row + size - 1][col] = OCCUPIED;
                 if (placeBlock(board, row, col, d, size - 1)) {
                     return true;
-                } else {
-                    board[row + size - 1][col] = EMPTY;
                 }
             }
+            board[row + size - 1][col] = EMPTY;
         }
     }
 
     return false;
 }
+
+bool cannotFitThisBlockHorizontal (char board[BOARD_SIZE][BOARD_SIZE], int row, int col, int size) {
+    if (size <= 0) {
+        return false;
+    }
+
+    if (col >= BOARD_SIZE) {
+        return cannotFitThisBlockHorizontal(board, row + 1, col - BOARD_SIZE, size);
+    }
+
+    if (row >= BOARD_SIZE) {
+        return true;
+    }
+
+    if (col + size <= BOARD_SIZE) {
+        if (board[row][col + size - 1] == EMPTY) {
+            if (!cannotFitThisBlockHorizontal(board, row, col, size - 1)) {
+                return false;
+            }
+        }
+        return cannotFitThisBlockHorizontal(board, row, col + 1, size);
+    }
+    return true;
+}
+
+bool cannotFitThisBlockVertical (char board[BOARD_SIZE][BOARD_SIZE], int row, int col, int size) {
+    if (size <= 0) {
+        return false;
+    }
+
+    if (row >= BOARD_SIZE) {
+        return cannotFitThisBlockVertical(board, row - BOARD_SIZE, col + 1, size);
+    }
+
+    if (col >= BOARD_SIZE) {
+        return true;
+    }
+
+    if (row + size <= BOARD_SIZE) {
+        if (board[row + size - 1][col] == EMPTY) {
+            if (!cannotFitThisBlockVertical(board, row, col, size - 1)) {
+                return false;
+            } else {
+                return cannotFitThisBlockVertical(board, row + 1, col, size);
+            }
+        }
+    }
+    return true;
+}
+
 
 
 /**
@@ -153,7 +202,7 @@ bool placeBlock(char board[BOARD_SIZE][BOARD_SIZE], int row, int col, direction 
  *
  */
 bool cannotFitThisBlock (char board[BOARD_SIZE][BOARD_SIZE], int row, int col, int size) {
-    return true;
+    return cannotFitThisBlockHorizontal(board, row, col, size) && cannotFitThisBlockVertical(board, row, col, size);
 }
 
 
