@@ -85,8 +85,6 @@ int getSmallestBlock(const int blocks[], int size) {
     }
 }
 
-
-
 /**
  * @TODO function.
  *
@@ -104,6 +102,35 @@ int getSmallestBlock(const int blocks[], int size) {
  * You need to complete this function with recursion.
  */
 bool placeBlock(char board[BOARD_SIZE][BOARD_SIZE], int row, int col, direction d, int size) {
+    // base case
+    if (size <= 0) {
+        return true;
+    }
+
+    if (d == RIGHT) {
+        if (col + size <= BOARD_SIZE) {
+            if (board[row][col + size - 1] == EMPTY) {
+                board[row][col + size - 1] = OCCUPIED;
+                if (placeBlock(board, row, col, d, size - 1)) {
+                    return true;
+                } else {
+                    board[row][col + size - 1] = EMPTY;
+                }
+            }
+        }
+    } else if (d == DOWN) {
+        if (row + size <= BOARD_SIZE) {
+            if (board[row + size - 1][col] == EMPTY) {
+                board[row + size - 1][col] = OCCUPIED;
+                if (placeBlock(board, row, col, d, size - 1)) {
+                    return true;
+                } else {
+                    board[row + size - 1][col] = EMPTY;
+                }
+            }
+        }
+    }
+
     return false;
 }
 
