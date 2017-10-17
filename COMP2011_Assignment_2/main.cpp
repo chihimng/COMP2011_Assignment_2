@@ -124,9 +124,10 @@ bool placeBlock(char board[BOARD_SIZE][BOARD_SIZE], int row, int col, direction 
                 board[row + size - 1][col] = OCCUPIED;
                 if (placeBlock(board, row, col, d, size - 1)) {
                     return true;
+                } else {
+                    board[row + size - 1][col] = EMPTY;
                 }
             }
-            board[row + size - 1][col] = EMPTY;
         }
     }
 
