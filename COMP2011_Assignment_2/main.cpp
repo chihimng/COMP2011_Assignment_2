@@ -215,7 +215,7 @@ bool cannotFitThisBlockVertically (char board[BOARD_SIZE][BOARD_SIZE], int row, 
     } else {
 //        cout << "filled" << endl;
         if (current == 0) {
-            return cannotFitThisBlockHorizontally(board, row, col + 1, size, 0); // try next start point
+            return cannotFitThisBlockVertically(board, row + 1, col, size, 0); // try next start point
         } else {
             return true;
         }
