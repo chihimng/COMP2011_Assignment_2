@@ -75,7 +75,7 @@ void initBoard(char board[BOARD_SIZE][BOARD_SIZE]) {
  *
  */
 int getSmallestBlock(const int blocks[], int size) {
-    if (size < 0) {
+    if (size < 1) {
         return BOARD_SIZE + 1;
     }
 
@@ -86,6 +86,14 @@ int getSmallestBlock(const int blocks[], int size) {
     }
 }
 
+void chngaxTestGetSmallestBlock() {
+    int test0[4] = {0,1,0,2};
+    int test1[4] = {2,0,0,1};
+    int test2[4] = {0,0,1,2};
+    cout << "Test 1 {0,1,0,2} Expected 2 Returns " << getSmallestBlock(test0, 4) << endl;
+    cout << "Test 2 {2,0,0,1} Expected 1 Returns " << getSmallestBlock(test1, 4) << endl;
+    cout << "Test 3 {0,0,1,2} Expected 3 Returns " << getSmallestBlock(test2, 4) << endl;
+}
 
 
 /**
