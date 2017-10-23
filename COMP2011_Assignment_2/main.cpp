@@ -66,9 +66,10 @@ void initBoard(char board[BOARD_SIZE][BOARD_SIZE]) {
  *
  * When this function is called in the main program, the variable "size" is always set as BOARD_SIZE.
  *
- * Example, assume the blocks array is {0, 1, 0, 2}; this should return 1;
- *                 the blocks array is {2, 0, 0, 1}; this should return 0;
- *                 the blocks array is {0, 0, 1, 2}; this should return 2; etc.
+ * //UPDATED HERE @ 18/10/2017
+ * Example, assume the blocks array is {0, 1, 0, 2}; this should return 2;
+ *                 the blocks array is {2, 0, 0, 1}; this should return 1;
+ *                 the blocks array is {0, 0, 1, 2}; this should return 3; etc.
  *
  * Note, if the blocks array contains only 0s (all blocks are used), this should return BOARD_SIZE + 1.
  *
@@ -84,6 +85,8 @@ int getSmallestBlock(const int blocks[], int size) {
         return BOARD_SIZE - size + 1;
     }
 }
+
+
 
 /**
  * @TODO function.
@@ -134,6 +137,24 @@ bool placeBlock(char board[BOARD_SIZE][BOARD_SIZE], int row, int col, direction 
     return false;
 }
 
+
+/**
+ * @TODO function.
+ *
+ * You need to check if a player have any possible way to fit a block to the board.
+ * This function takes the input
+ * 1) board - the 2D array representing the board
+ * 2) row, col - two variables that may be useful to construct your recursion
+ * 3) size - the size of a block
+ *
+ * The function shall return true if there is NO anyway to fit a block to the board
+ * and return false if there is one or more than one way to fit a block into the board.
+ *
+ * When this function is called from the main program, we always fill the variable row
+ * and col as 0. But when you implement this function, these two parameter may be useful
+ * to construct your recursion.
+ *
+ */
 bool cannotFitThisBlockHorizontal (char board[BOARD_SIZE][BOARD_SIZE], int row, int col, int size) {
     if (size <= 0) {
         return false;
@@ -183,25 +204,6 @@ bool cannotFitThisBlockVertical (char board[BOARD_SIZE][BOARD_SIZE], int row, in
     return true;
 }
 
-
-
-/**
- * @TODO function.
- *
- * You need to check if a player have any possible way to fit a block to the board.
- * This function takes the input
- * 1) board - the 2D array representing the board
- * 2) row, col - two variables that may be useful to construct your recursion
- * 3) size - the size of a block
- *
- * The function shall return true if there is NO anyway to fit a block to the board
- * and return false if there is one or more than one way to fit a block into the board.
- *
- * When this function is called from the main program, we always fill the variable row
- * and col as 0. But when you implement this function, these two parameter may be useful
- * to construct your recursion.
- *
- */
 bool cannotFitThisBlock (char board[BOARD_SIZE][BOARD_SIZE], int row, int col, int size) {
     return cannotFitThisBlockHorizontal(board, row, col, size) && cannotFitThisBlockVertical(board, row, col, size);
 }
@@ -313,4 +315,3 @@ int main() {
     cout << "Player " << (turn + 1) << ":no more move, game over!" << endl;
 
 }
-
