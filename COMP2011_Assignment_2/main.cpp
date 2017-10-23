@@ -163,57 +163,68 @@ bool placeBlock(char board[BOARD_SIZE][BOARD_SIZE], int row, int col, direction 
  * to construct your recursion.
  *
  */
-bool cannotFitThisBlockHorizontal (char board[BOARD_SIZE][BOARD_SIZE], int row, int col, int size) {
-    if (size <= 0) {
+
+bool cannotFitThisBlockHorizontally (char board[BOARD_SIZE][BOARD_SIZE], int row, int col, int size, int current) {
+    if (current >= size) { // base case
         return false;
     }
-
-    if (col >= BOARD_SIZE) {
-        return cannotFitThisBlockHorizontal(board, row + 1, col - BOARD_SIZE, size);
-    }
-
-    if (row >= BOARD_SIZE) {
+    if (row >= BOARD_SIZE) { // all rows tried
         return true;
     }
-
-    if (col + size <= BOARD_SIZE) {
-        if (board[row][col + size - 1] == EMPTY) {
-            if (!cannotFitThisBlockHorizontal(board, row, col, size - 1)) {
-                return false;
-            }
-        }
-        return cannotFitThisBlockHorizontal(board, row, col + 1, size);
+    if (col + size > BOARD_SIZE) { // go to next row if block out of bounds
+        return cannotFitThisBlockHorizontally(board, row + 1, 0, size, 0);
     }
-    return true;
+//    cout << "horizontal checking (" << row << "," << col + current << ")...";
+    if (board[row][col + current] == EMPTY) { // test for current start point
+//        cout << "empty" << endl;
+        if (!cannotFitThisBlockHorizontally(board, row, col, size, current + 1)) { // recursion
+//            cout << "possible horizontal start point: (" << row << "," << col << ") size: "<< size << " current: " << current << endl;
+            return false; // current start point can fit block, return false
+        } else {
+            return cannotFitThisBlockHorizontally(board, row, col + 1, size, 0); // try next start point
+        }
+    } else {
+//        cout << "filled" << endl;
+        if (current == 0) {
+            return cannotFitThisBlockHorizontally(board, row, col + 1, size, 0); // try next start point
+        } else {
+            return true;
+        }
+    }
 }
 
-bool cannotFitThisBlockVertical (char board[BOARD_SIZE][BOARD_SIZE], int row, int col, int size) {
-    if (size <= 0) {
+bool cannotFitThisBlockVertically (char board[BOARD_SIZE][BOARD_SIZE], int row, int col, int size, int current) {
+    if (current >= size) { // base case
         return false;
     }
-
-    if (row >= BOARD_SIZE) {
-        return cannotFitThisBlockVertical(board, row - BOARD_SIZE, col + 1, size);
-    }
-
-    if (col >= BOARD_SIZE) {
+    if (col >= BOARD_SIZE) { // all cols tried
         return true;
     }
-
-    if (row + size <= BOARD_SIZE) {
-        if (board[row + size - 1][col] == EMPTY) {
-            if (!cannotFitThisBlockVertical(board, row, col, size - 1)) {
-                return false;
-            } else {
-                return cannotFitThisBlockVertical(board, row + 1, col, size);
-            }
+    if (row + size > BOARD_SIZE) { // go to next col if block out of bounds
+        return cannotFitThisBlockVertically(board, 0, col + 1, size, 0);
+    }
+//    cout << "vertical checking (" << row + current << "," << col << ")... ";
+    if (board[row + current][col] == EMPTY) { // test for current start point
+//        cout << "empty" << endl;
+        if (!cannotFitThisBlockVertically(board, row, col, size, current + 1)) { // recursion
+//            cout << "possible vertical start point: (" << row << "," << col << ") size: "<< size << " current: " << current << endl;
+            return false; // current start point can fit block, return false
+        } else {
+            return cannotFitThisBlockVertically(board, row + 1, col, size, 0); // try next start point
+        }
+    } else {
+//        cout << "filled" << endl;
+        if (current == 0) {
+            return cannotFitThisBlockHorizontally(board, row, col + 1, size, 0); // try next start point
+        } else {
+            return true;
         }
     }
-    return true;
 }
+
 
 bool cannotFitThisBlock (char board[BOARD_SIZE][BOARD_SIZE], int row, int col, int size) {
-    return cannotFitThisBlockHorizontal(board, row, col, size) && cannotFitThisBlockVertical(board, row, col, size);
+    return cannotFitThisBlockVertically(board, row, col, size, 0) && cannotFitThisBlockHorizontally(board, row, col, size, 0);
 }
 
 
