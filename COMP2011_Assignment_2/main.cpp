@@ -253,8 +253,112 @@ bool cannotFitThisBlock (char board[BOARD_SIZE][BOARD_SIZE], int row, int col, i
  * of the checkmate moves into the variables row, col, direction, size.
  */
 
+void copyBoard(char from[BOARD_SIZE][BOARD_SIZE], char to[BOARD_SIZE][BOARD_SIZE], int i = 0){
+    if (i >= BOARD_SIZE * BOARD_SIZE) {
+        return;
+    }
+    to[i/BOARD_SIZE][i%BOARD_SIZE] = from[i/BOARD_SIZE][i%BOARD_SIZE];
+    return copyBoard(from, to, i + 1);
+}
+
+void copyBlocks(int from[BOARD_SIZE], int to[BOARD_SIZE], int i = 0) {
+    if (i >= BOARD_SIZE) {
+        return;
+    }
+    to[i] = from[i];
+    return copyBlocks(from, to, i + 1);
+}
+
+bool tryPlaceBlock(char board[BOARD_SIZE][BOARD_SIZE], int& row, int& col, direction d, int size) {
+    if (d == RIGHT) {
+        if (row >= BOARD_SIZE) { // base case
+            return false;
+        }
+        if (col >= BOARD_SIZE) {
+            row += col/BOARD_SIZE;
+            col %= BOARD_SIZE;
+            return tryPlaceBlock(board, row, col, d, size);
+        }
+        if (placeBlock(board, row, col, d, size)) {
+            return true;
+        } else {
+            col += 1;
+            return tryPlaceBlock(board, row, col, d, size);
+        }
+    } else {
+        if (col >= BOARD_SIZE) { // base case
+            return false;
+        }
+        if (row >= BOARD_SIZE) {
+            col += row/BOARD_SIZE;
+            row %= BOARD_SIZE;
+            return tryPlaceBlock(board, row, col, d, size);
+        }
+        if (placeBlock(board, row, col, d, size)) {
+            return true;
+        } else {
+            row += 1;
+            return tryPlaceBlock(board, row, col, d, size);
+        }
+    }
+}
+
+bool tryCheckMate (char board[BOARD_SIZE][BOARD_SIZE], int& row, int& col, direction& d, int blocks[BOARD_SIZE], int& size) {
+    if (d == DOWN && col >= BOARD_SIZE) {
+        return false;
+    }
+    if (d == RIGHT && row >= BOARD_SIZE) {
+        row = 0;
+        col = 0;
+        d = DOWN;
+        return tryCheckMate(board, row, col, d, blocks, size);
+    }
+    char tempBoard[BOARD_SIZE][BOARD_SIZE] = {};
+    copyBoard(board, tempBoard);
+    int tempBlocks[BOARD_SIZE] = {};
+    copyBlocks(blocks, tempBlocks);
+    if (tryPlaceBlock(tempBoard, row, col, d, size)) {
+        tempBlocks[size - 1] -= 1;
+        if (cannotFitThisBlock(tempBoard, 0, 0, getSmallestBlock(tempBlocks, BOARD_SIZE))) {
+            return true;
+        } else {
+            if (d == RIGHT) {
+                col += 1;
+            } else {
+                row += 1;
+            }
+            return tryCheckMate(board, row, col, d, blocks, size);
+        }
+    } else {
+        if (d == RIGHT) {
+            row = 0;
+            col = 0;
+            d = DOWN;
+            return tryCheckMate(board, row, col, d, blocks, size);
+        } else {
+            return false;
+        }
+    }
+}
+
 bool checkMate (char board[BOARD_SIZE][BOARD_SIZE], int& row, int& col, direction& d, int blocks[BOARD_SIZE], int& size) {
-    return false;
+    char tempBoard[BOARD_SIZE][BOARD_SIZE] = {};
+    copyBoard(board, tempBoard);
+    int tempBlocks[BOARD_SIZE] = {};
+    copyBlocks(blocks, tempBlocks);
+    int tempRow = row;
+    int tempCol = col;
+    direction tempD = RIGHT;
+    int tempSize = getSmallestBlock(tempBlocks, BOARD_SIZE);
+    if (tryCheckMate(tempBoard, tempRow, tempCol, tempD, tempBlocks, tempSize)) {
+        row = tempRow;
+        col = tempCol;
+        d = tempD;
+        size = tempSize;
+        return true;
+    } else {
+        return false;
+    }
 }
 
 int main() {
